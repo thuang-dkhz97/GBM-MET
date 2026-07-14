@@ -1,9 +1,11 @@
 library(dplyr)
+library(sva)
 library(openxlsx)
 
 # Then generate 3 separate data files for comparing
 # GBM vs MET, GBM vs HC, MET vs HC. 
 # Conduct quantile norm and if required, BE correction
+# COMBAT is applied only to the GBM class.
 
 # ================== Load data =======================
 
@@ -18,12 +20,16 @@ combine.filter <- cbind(hcbb.filter, sbtb.filter)
 sample.data <- read.xlsx("./data/class-labels.xlsx")
 obtain.class.data <- function(data, classes) {
   sample.ids <- sample.data$Sample.ID[sample.data$Class %in% classes]
-  data[,colnames(data) %in% sample.ids]
+  list("data"=data[,colnames(data) %in% sample.ids],
+       "class"=sample.data$Class[which(sample.data$Sample.ID %in% sample.ids)])
 }
 
-gbm.v.met <- obtain.class.data(combine.filter, c("GBM", "MET"))
-gbm.v.hc <- obtain.class.data(combine.filter, c("GBM", "HC"))
-met.v.hc <- obtain.class.data(combine.filter, c("MET", "HC"))
+gbm.v.met.data <- obtain.class.data(combine.filter, c("GBM", "MET"))
+gbm.v.met <- gbm.v.met.data$data
+gbm.v.hc.data <- obtain.class.data(combine.filter, c("GBM", "HC"))
+gbm.v.hc <- gbm.v.hc.data$data
+met.v.hc.data <- obtain.class.data(combine.filter, c("MET", "HC"))
+met.v.hc <- met.v.hc.data$data
 
 # ================ Quantile norm
 
@@ -54,10 +60,29 @@ gbm.v.met.norm <- perform.quantile.norm(gbm.v.met)
 gbm.v.hc.norm <- perform.quantile.norm(gbm.v.hc)
 met.v.hc.norm <- perform.quantile.norm(met.v.hc)
 
-# ================= COMBAT (for gbm.v.met.norm)
+# ================= COMBAT (for gbm.v.met.norm and gbm.v.hc.norm)
 
-# UP TO HERE
+apply.combat <- function(v.data) {
+  # Need to apply COMBAT to the gbm cohort.
+  # Extract the gbm cohorts
+  gbm.cohorts.i <- which(sample.data$Class == "GBM")
+  gbm.cohorts.meta <- sample.data[gbm.cohorts.i,]
+  
+  # Now, extract the gbm cohorts from our data
+  cross.i <- match(gbm.cohorts.meta$Sample.ID, colnames(v.data))
+  gbm.cohorts.data <- v.data[,cross.i]
+  # Create the batch list from this
+  gbm.batch.label <- rep(1, ncol(gbm.cohorts.data))
+  # Set the second batch to cohort B.
+  gbm.batch.label[gbm.cohorts.meta$Cohort == "B"] <- 2
+  # Apply combat
+  combat.data <- ComBat(gbm.cohorts.data, gbm.batch.label, ref.batch=1)
+  v.data[,cross.i] <- combat.data
+  v.data
+}
 
+gbm.v.met.norm <- apply.combat(gbm.v.met.norm)
+gbm.v.hc.norm <- apply.combat(gbm.v.hc.norm)
 
 # ============= Save
 
@@ -65,5 +90,6 @@ if (!dir.exists("./src/process/combine-data-3")) {
   mkdirs("./src/process/combine-data-3")
 }
 
-# write.csv(hcbb.filter, "./src/process/combine-data-3/hcbb-combine-data-3.csv")
-# write.csv(sbtb.filter, "./src/process/combine-data-3/sbtb-combine-data-3.csv")
+write.csv(gbm.v.met.norm, "./src/process/combine-data-3/gbm-v-met-norm.csv")
+write.csv(gbm.v.hc.norm, "./src/process/combine-data-3/gbm-v-hc-norm.csv")
+write.csv(met.v.hc.norm, "./src/process/combine-data-3/met-v-hc-norm.csv")

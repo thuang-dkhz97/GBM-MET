@@ -31,6 +31,9 @@ colnames(sbtb) <- gsub(".mzML", "",
                        colnames(sbtb), fixed=T)
 colnames(sbtb) <- gsub("_200ng|_300ng", "",
                        colnames(sbtb))
+colnames(sbtb)
+colnames(sbtb) <- gsub("-", "",
+                       colnames(sbtb), fixed=T)
 
 # ======================================================
 
@@ -49,7 +52,39 @@ hcbb <- hcbb %>% dplyr::select(any_of(sample.sheet$Sample.ID))
 
 combined.data.uncorrected <- cbind(hcbb, sbtb) 
 
-# Remove features with more than 50% missingness
+# ====================== Side quest: Figure 3
+# Remove features with more than 50% missingness in each group separately.
+# For Fig 3
+gbm.a <- hcbb[,match(sample.sheet$Sample.ID[sample.sheet$Class == "GBM" & sample.sheet$Cohort == "A"],
+                    colnames(hcbb))]
+met <- hcbb[,match(sample.sheet$Sample.ID[sample.sheet$Class == "MET"], 
+                   colnames(hcbb))]
+hc <- hcbb[,match(sample.sheet$Sample.ID[sample.sheet$Class == "HC"],
+                  colnames(hcbb))]
+gbm.b <- sbtb
+
+# Extract the features with less than 50% missingness
+extract.non.missing.features <- function(data) {
+  more.than.0.5.i <- which(rowMeans(is.na(data)) > 0.5)
+  data[-more.than.0.5.i,]
+}
+
+gbm.a <- extract.non.missing.features(gbm.a)
+met <- extract.non.missing.features(met)
+hc <- extract.non.missing.features(hc)
+gbm.b <- extract.non.missing.features(gbm.b)
+if (!dir.exists("./src/process/combine-data-1/fig3")) {
+  mkdirs("./src/process/combine-data-1/fig3")
+}
+
+# Save each file.
+write.csv(gbm.a, file="./src/process/combine-data-1/fig3/gbm-a.csv")
+write.csv(met, file="./src/process/combine-data-1/fig3/met.csv")
+write.csv(hc, file="./src/process/combine-data-1/fig3/hc.csv")
+write.csv(gbm.b, file="./src/process/combine-data-1/fig3/gbm-b.csv")
+
+# =================================================
+
 more.than.0.5.i <- which(rowMeans(is.na(combined.data.uncorrected)) > 0.5)
 combined.data.uncorrected <- combined.data.uncorrected[-more.than.0.5.i,]
 

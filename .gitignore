@@ -51,3 +51,7 @@ rsconnect/
 .DS_Store
 *.Rproj
 data/*
+FEMPipeline/*
+results/*
+src/process/combine-data-1/fig3/*
+src/process/combine-data-3/*
