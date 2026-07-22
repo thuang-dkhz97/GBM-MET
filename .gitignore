@@ -55,3 +55,4 @@ FEMPipeline/*
 results/*
 src/process/combine-data-1/fig3/*
 src/process/combine-data-3/*
+src/figures/*.html
