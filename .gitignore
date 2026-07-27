@@ -53,6 +53,10 @@ rsconnect/
 data/*
 FEMPipeline/*
 results/*
-src/process/combine-data-1/fig3/*
-src/process/combine-data-3/*
+src/process-2.6/combine-data-1/fig3/*
+src/process-2.6/combine-data-2/*
+src/process-2.6/combine-data-3/*
+src/pipeline-2.7/filtration-after-initial-selection/candidate/*
+src/pipeline-2.7/final-filtration/selected/*
+src/DE_pipeline-2.8/feature-ranks/*
 src/figures/*.html

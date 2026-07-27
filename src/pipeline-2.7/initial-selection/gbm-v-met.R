@@ -31,7 +31,7 @@ library(FEMPipeline)
 
 
 dparg <- list(phenotype_file_name = "data/proteomic-phenotype.txt",
-              read_count_dir_path = "src/process/combine-data-3",
+              read_count_dir_path = "src/process-2.6/combine-data-3",
               read_count_file_name = "gbm-v-met-norm.csv",
               sep = ",",
               dataset_id = "GBM_vs_MET_combat_mod",

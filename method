@@ -15,11 +15,9 @@ FEMPipeline
 - Then obtain the list of features that have been selected in at least
   27, 28, 29 and 30 iterations per FSM. These panels will then be run
   against the predictive models again, and the best one will be selected.
-
-Then obtain the FSM that had the highest mean AUC, averaged across each
-  predictive model.
-  - All features resulted in the highest mean AUC (by 0.1%), but this doesn't make sense,
-  so I have opted to use the next highest
-  - I have removed logistic regression as a predictive model.
-  - I've also not considered ga_rf, since it consistently selects
-  <27 for each feature.
+  - If there are ties, then the one with the smallest number of features
+    will be selected.
+  
+2.8
+- Conduct DE, and RFE to rank each feature. Note that log2 transformation
+  was conducted here, as limma expects heteroskedactic residuals.
