@@ -9,9 +9,9 @@ library(openxlsx)
 
 # ================== Load data =======================
 
-hcbb.filter <- read.csv("./src/process/combine-data-2/hcbb-combine-data-2.csv",
+hcbb.filter <- read.csv("./src/process-2.6/combine-data-2/hcbb-combine-data-2.csv",
                         row.names=1, check.names=F)
-sbtb.filter <- read.csv("./src/process/combine-data-2/sbtb-combine-data-2.csv",
+sbtb.filter <- read.csv("./src/process-2.6/combine-data-2/sbtb-combine-data-2.csv",
                         row.names=1, check.names=F)
 combine.filter <- cbind(hcbb.filter, sbtb.filter)
 
@@ -86,10 +86,10 @@ gbm.v.hc.norm <- apply.combat(gbm.v.hc.norm)
 
 # ============= Save
 
-if (!dir.exists("./src/process/combine-data-3")) {
-  mkdirs("./src/process/combine-data-3")
+if (!dir.exists("./src/process-2.6/combine-data-3")) {
+  mkdirs("./src/process-2.6/combine-data-3")
 }
 
-write.csv(gbm.v.met.norm, "./src/process/combine-data-3/gbm-v-met-norm.csv")
-write.csv(gbm.v.hc.norm, "./src/process/combine-data-3/gbm-v-hc-norm.csv")
-write.csv(met.v.hc.norm, "./src/process/combine-data-3/met-v-hc-norm.csv")
+write.csv(gbm.v.met.norm, "./src/process-2.6/combine-data-3/gbm-v-met-norm.csv")
+write.csv(gbm.v.hc.norm, "./src/process-2.6/combine-data-3/gbm-v-hc-norm.csv")
+write.csv(met.v.hc.norm, "./src/process-2.6/combine-data-3/met-v-hc-norm.csv")

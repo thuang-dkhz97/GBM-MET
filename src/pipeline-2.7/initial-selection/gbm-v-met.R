@@ -30,6 +30,20 @@ library(FEMPipeline)
 # source("FEMPipeline/R/compute_metrics.R")
 
 
+# dparg <- list(phenotype_file_name = "data/proteomic-phenotype.txt",
+#               read_count_dir_path = "src/process-2.6/combine-data-3",
+#               read_count_file_name = "gbm-v-met-norm.csv",
+#               sep = ",",
+#               dataset_id = "GBM_vs_MET_combat_mod",
+#               classification_criteria = "GBMVsMET",
+#               classes = c("MET", "GBM"),
+#               cores = 16,
+#               results_dir_path = "results/fem_pipeline_results_combat_mod",
+#               norm = "none", perform_filter = FALSE,
+#               fems_to_run = c("t-test"))
+# 
+# do.call(execute_pipeline, dparg)
+
 dparg <- list(phenotype_file_name = "data/proteomic-phenotype.txt",
               read_count_dir_path = "src/process-2.6/combine-data-3",
               read_count_file_name = "gbm-v-met-norm.csv",
@@ -38,21 +52,7 @@ dparg <- list(phenotype_file_name = "data/proteomic-phenotype.txt",
               classification_criteria = "GBMVsMET",
               classes = c("MET", "GBM"),
               cores = 16,
-              results_dir_path = "results/fem_pipeline_results_combat_mod",
-              norm = "none", perform_filter = FALSE,
-              fems_to_run = c("t-test"))
-
-do.call(execute_pipeline, dparg)
-
-dparg <- list(phenotype_file_name = "data/proteomic-phenotype.txt",
-              read_count_dir_path = "src/process/combine-data-3",
-              read_count_file_name = "gbm-v-met-norm.csv",
-              sep = ",",
-              dataset_id = "GBM_vs_MET_combat_mod",
-              classification_criteria = "GBMVsMET",
-              classes = c("MET", "GBM"),
-              cores = 16,
-              results_dir_path = "results/fem_pipeline_results_combat_mod",
+              results_dir_path = "results/initial-run/fem_pipeline_results_combat_mod",
               norm = "none", perform_filter = FALSE,
               fems_to_run = c("all",
                               "t-test", "wilcoxontest",

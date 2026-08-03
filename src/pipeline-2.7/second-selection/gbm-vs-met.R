@@ -35,10 +35,12 @@ library(FEMPipeline)
 methods <- c("all", "ga_rf", "mrmr_perc50", "mrmr30",
              "mrmr50", "mrmr75", "mrmr100", "ranger_pos_impu_cor",
              "RF_RFE", "t-test", "wilcoxontest")
+# methods <- c("t-test")
 for (i in 27:30) {
   # Then for each method, extract all features that were selected
   # in more than or equal to i iterations.
   for (method in methods) {
+    if (method == "all" & i %in% c(27, 28, 29)) next
     dir.path <- paste0("results/second-run/GBM_VS_MET/fem_pipeline_results_combat_mod_GBM_VS_MET-fsm-", method, 
                        "-feat-num-", i)
     R.utils::mkdirs(dir.path)

@@ -7,9 +7,9 @@ library(missForest)
 
 # ================== Load data =======================
 
-hcbb.filter <- read.csv("./src/process/combine-data-1/hcbb-combine-data-1.csv",
+hcbb.filter <- read.csv("./src/process-2.6/combine-data-1/hcbb-combine-data-1.csv",
                         row.names=1, check.names=F)
-sbtb.filter <- read.csv("./src/process/combine-data-1/sbtb-combine-data-1.csv",
+sbtb.filter <- read.csv("./src/process-2.6/combine-data-1/sbtb-combine-data-1.csv",
                         row.names=1, check.names=F)
 
 # ============ Perform missforest imputation ==================
@@ -21,9 +21,9 @@ sbtb.filter <- missForest(sbtb.filter)$ximp
 
 # ============= Save
 
-if (!dir.exists("./src/process/combine-data-2")) {
-  mkdirs("./src/process/combine-data-2")
+if (!dir.exists("./src/process-2.6/combine-data-2")) {
+  mkdirs("./src/process-2.6/combine-data-2")
 }
 
-write.csv(hcbb.filter, "./src/process/combine-data-2/hcbb-combine-data-2.csv")
-write.csv(sbtb.filter, "./src/process/combine-data-2/sbtb-combine-data-2.csv")
+write.csv(hcbb.filter, "./src/process-2.6/combine-data-2/hcbb-combine-data-2.csv")
+write.csv(sbtb.filter, "./src/process-2.6/combine-data-2/sbtb-combine-data-2.csv")

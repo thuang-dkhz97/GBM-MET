@@ -21,6 +21,9 @@ colnames(hcbb) <- gsub(".mzML", "",
 colnames(hcbb) <- strsplit(colnames(hcbb), split="_") %>%
   lapply(\(x) x[[1]][1]) %>%
   unlist
+ncol(hcbb)
+# Remove all instances of SB12 in hcbb
+hcbb <- hcbb[,!grepl("SB12", colnames(hcbb))]
 
 sbtb <- read.table("data/SBTB2022.gg_matrix.tsv", header=T, sep="\t", check.names=F, row.names=1)
 colnames(sbtb) <- gsub("R:\\PRJ-LargeDataAnalyses_20\\PEV_SBTB2022\\MZMLSBTB\\20220714_Eclipse-OT_SH_",
@@ -34,6 +37,11 @@ colnames(sbtb) <- gsub("_200ng|_300ng", "",
 colnames(sbtb)
 colnames(sbtb) <- gsub("-", "",
                        colnames(sbtb), fixed=T)
+# Remove all instances of SB12, except for SB12_01. This is the
+# one recommended for use by Susannah.
+sbtb <- sbtb[,!(grepl("SB12", colnames(sbtb)) & (colnames(sbtb) != "SB12_01"))]
+# Rename SB12_01 to SB12.
+colnames(sbtb)[colnames(sbtb) == "SB12_01"] <- "SB12"
 
 # ======================================================
 
@@ -73,15 +81,15 @@ gbm.a <- extract.non.missing.features(gbm.a)
 met <- extract.non.missing.features(met)
 hc <- extract.non.missing.features(hc)
 gbm.b <- extract.non.missing.features(gbm.b)
-if (!dir.exists("./src/process/combine-data-1/fig3")) {
-  mkdirs("./src/process/combine-data-1/fig3")
+if (!dir.exists("./src/process-2.6/combine-data-1/fig3")) {
+  mkdirs("./src/process-2.6/combine-data-1/fig3")
 }
 
 # Save each file.
-write.csv(gbm.a, file="./src/process/combine-data-1/fig3/gbm-a.csv")
-write.csv(met, file="./src/process/combine-data-1/fig3/met.csv")
-write.csv(hc, file="./src/process/combine-data-1/fig3/hc.csv")
-write.csv(gbm.b, file="./src/process/combine-data-1/fig3/gbm-b.csv")
+write.csv(gbm.a, file="./src/process-2.6/combine-data-1/fig3/gbm-a.csv")
+write.csv(met, file="./src/process-2.6/combine-data-1/fig3/met.csv")
+write.csv(hc, file="./src/process-2.6/combine-data-1/fig3/hc.csv")
+write.csv(gbm.b, file="./src/process-2.6/combine-data-1/fig3/gbm-b.csv")
 
 # =================================================
 
@@ -97,9 +105,9 @@ sbtb.filter <- sbtb[rownames(sbtb) %in% kept.features,]
 
 # ============ Save output ====================
 
-if (!dir.exists("./src/process/combine-data-1")) {
-  mkdirs("./src/process/combine-data-1")
+if (!dir.exists("./src/process-2.6/combine-data-1")) {
+  mkdirs("./src/process-2.6/combine-data-1")
 }
 
-write.csv(hcbb.filter, file="./src/process/combine-data-1/hcbb-combine-data-1.csv")
-write.csv(sbtb.filter, file="./src/process/combine-data-1/sbtb-combine-data-1.csv")
+write.csv(hcbb.filter, file="./src/process-2.6/combine-data-1/hcbb-combine-data-1.csv")
+write.csv(sbtb.filter, file="./src/process-2.6/combine-data-1/sbtb-combine-data-1.csv")

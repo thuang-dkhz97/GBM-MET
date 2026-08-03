@@ -45,6 +45,7 @@ decide.ml.panel <- function(source.folder = "results/second-run/GBM_VS_MET") {
 
 # ========== GBM V MET
 data <- decide.ml.panel()
+print(data)
 d <- data[1,]
 # Take the first model, and record/save which features led to the highest performance
 counts <- read.csv(file.path("src/pipeline-2.7/filtration-after-initial-selection/candidate",
@@ -56,16 +57,16 @@ feature.sel <- rownames(counts)
 gbm.v.met.save <- list("method"=d$FSM,
                        "sel.size"=d$sel.size,
                        "features"=feature.sel)
+print(gbm.v.met.save)
 # Save
 save.dir <- file.path("src/pipeline-2.7/final-filtration/selected")
 R.utils::mkdirs(save.dir)
 
 saveRDS(gbm.v.met.save, file.path(save.dir, "gbm-vs-met-sels.rds"))
 
-
 # ========== GBM V HC
 data <- decide.ml.panel("results/second-run/GBM_VS_HC")
-
+print(data)
 d <- data[1,]
 # Take the first model, and record/save which features led to the highest performance
 counts <- read.csv(file.path("src/pipeline-2.7/filtration-after-initial-selection/candidate",
@@ -74,11 +75,10 @@ counts <- read.csv(file.path("src/pipeline-2.7/filtration-after-initial-selectio
                    row.names=1)
 feature.sel <- rownames(counts)
 
-print(length(feature.sel))
 gbm.v.hc.save <- list("method"=d$FSM,
                       "sel.size"=d$sel.size,
                       "features"=feature.sel)
-
+print(gbm.v.hc.save)
 # Save
 save.dir <- file.path("src/pipeline-2.7/final-filtration/selected")
 R.utils::mkdirs(save.dir)
@@ -87,6 +87,7 @@ saveRDS(gbm.v.hc.save, file.path(save.dir, "gbm-vs-hc-sels.rds"))
 
 # ========== MET V HC
 data <- decide.ml.panel("results/second-run/MET_VS_HC")
+print(data)
 d <- data[1,]
 # Take the first model, and record/save which features led to the highest performance
 counts <- read.csv(file.path("src/pipeline-2.7/filtration-after-initial-selection/candidate",
@@ -94,12 +95,11 @@ counts <- read.csv(file.path("src/pipeline-2.7/filtration-after-initial-selectio
                                     d$sel.size, "-candidate.csv")),
                    row.names=1)
 feature.sel <- rownames(counts)
-print(length(feature.sel))
 
 met.v.hc.save <- list("method"=d$FSM,
                       "sel.size"=d$sel.size,
                       "features"=feature.sel)
-
+print(met.v.hc.save)
 # Save
 save.dir <- file.path("src/pipeline-2.7/final-filtration/selected")
 R.utils::mkdirs(save.dir)

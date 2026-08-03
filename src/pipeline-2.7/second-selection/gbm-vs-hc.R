@@ -38,6 +38,7 @@ for (i in 27:30) {
   # Then for each method, extract all features that were selected
   # in more than or equal to i iterations.
   for (method in methods) {
+    if (method == "all" & i %in% c(27, 28, 29)) next
     dir.path <- paste0("results/second-run/GBM_VS_HC/fem_pipeline_results_combat_mod_GBM_VS_HC-fsm-", method, 
                        "-feat-num-", i)
     R.utils::mkdirs(dir.path)
