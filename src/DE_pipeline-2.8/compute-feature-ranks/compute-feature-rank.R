@@ -144,9 +144,10 @@ save.dir <- file.path("src", "DE_pipeline-2.8", "feature-ranks")
 gbm.v.met.processed <- read.csv("src/process-2.6/combine-data-3/gbm-v-met-norm.csv",
                                 row.names=1)
 # TEMPORARILY REMOVE SB12.1 - TO BE UPDATED WHEN SUSANNAH RESPONDS TO ME
-gbm.v.met.processed <- gbm.v.met.processed %>% dplyr::select(-all_of("SB12.1"))
+# gbm.v.met.processed <- gbm.v.met.processed %>% dplyr::select(-all_of("SB12.1"))
 gbm.v.met.labels <- read.table("src/process-2.6/combine-data-3/GBMVsMET_output_labels.txt", header=T)
 gbm.v.met.ml.pipeline.sels <- readRDS("src/pipeline-2.7/final-filtration/selected/gbm-vs-met-sels.rds")
+
 de.ml.biomarker.discovery.compute.feature.rank(gbm.v.met.processed,
                                                gbm.v.met.labels,
                                                c("MET", "GBM"),
@@ -158,7 +159,7 @@ de.ml.biomarker.discovery.compute.feature.rank(gbm.v.met.processed,
 
 gbm.v.hc.processed <- read.csv("src/process-2.6/combine-data-3/gbm-v-hc-norm.csv",
                                row.names=1)
-gbm.v.hc.processed <- gbm.v.hc.processed %>% dplyr::select(-all_of("SB12.1"))
+# gbm.v.hc.processed <- gbm.v.hc.processed %>% dplyr::select(-all_of("SB12.1"))
 gbm.v.hc.labels <- read.table("src/process-2.6/combine-data-3/GBMVsHC_output_labels.txt", header=T)
 gbm.v.hc.ml.pipeline.sels <- readRDS("src/pipeline-2.7/final-filtration/selected/gbm-vs-hc-sels.rds")
 de.ml.biomarker.discovery.compute.feature.rank(gbm.v.hc.processed,
