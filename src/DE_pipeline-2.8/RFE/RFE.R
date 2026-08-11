@@ -188,26 +188,26 @@ gbm.v.met.processed <- read.csv("src/process-2.6/combine-data-3/gbm-v-met-norm.c
                                 row.names=1)
 gbm.v.met.labels <- read.table("src/process-2.6/combine-data-3/GBMVsMET_output_labels.txt", header=T)
 
+# conduct.rfe(data=gbm.v.met.processed,
+#             phenotype=gbm.v.met.labels,
+#             conditions=c("MET", "GBM"),
+#             rankings=gbm.v.met.ranking,
+#             file.path(save.dir),
+#             0.01)
+
 conduct.rfe(data=gbm.v.met.processed,
             phenotype=gbm.v.met.labels,
             conditions=c("MET", "GBM"),
             rankings=gbm.v.met.ranking,
             file.path(save.dir),
-            0.01)
+            0.03)
 
-# conduct.rfe(data=gbm.v.met.processed,
-#             phenotype=gbm.v.met.labels,
-#             conditions=c("MET", "GBM"),
-#             rankings=gbm.v.met.ranking,
-#             file.path(save.dir),
-#             0.03)
-# 
-# conduct.rfe(data=gbm.v.met.processed,
-#             phenotype=gbm.v.met.labels,
-#             conditions=c("MET", "GBM"),
-#             rankings=gbm.v.met.ranking,
-#             file.path(save.dir),
-#             0.05)
+conduct.rfe(data=gbm.v.met.processed,
+            phenotype=gbm.v.met.labels,
+            conditions=c("MET", "GBM"),
+            rankings=gbm.v.met.ranking,
+            file.path(save.dir),
+            0.05)
 
 # ================== HC v GBM
 
@@ -216,26 +216,26 @@ gbm.v.hc.processed <- read.csv("src/process-2.6/combine-data-3/gbm-v-hc-norm.csv
                                 row.names=1)
 gbm.v.hc.labels <- read.table("src/process-2.6/combine-data-3/GBMVsHC_output_labels.txt", header=T)
 
-# conduct.rfe(data=gbm.v.hc.processed,
-#             phenotype=gbm.v.hc.labels,
-#             conditions=c("HC", "GBM"),
-#             rankings=gbm.v.hc.ranking,
-#             file.path(save.dir),
-#             0.01)
-# 
-# conduct.rfe(data=gbm.v.hc.processed,
-#             phenotype=gbm.v.hc.labels,
-#             conditions=c("HC", "GBM"),
-#             rankings=gbm.v.hc.ranking,
-#             file.path(save.dir),
-#             0.03)
-# 
-# conduct.rfe(data=gbm.v.hc.processed,
-#             phenotype=gbm.v.hc.labels,
-#             conditions=c("HC", "GBM"),
-#             rankings=gbm.v.hc.ranking,
-#             file.path(save.dir),
-#             0.05)
+conduct.rfe(data=gbm.v.hc.processed,
+            phenotype=gbm.v.hc.labels,
+            conditions=c("HC", "GBM"),
+            rankings=gbm.v.hc.ranking,
+            file.path(save.dir),
+            0.01)
+
+conduct.rfe(data=gbm.v.hc.processed,
+            phenotype=gbm.v.hc.labels,
+            conditions=c("HC", "GBM"),
+            rankings=gbm.v.hc.ranking,
+            file.path(save.dir),
+            0.03)
+
+conduct.rfe(data=gbm.v.hc.processed,
+            phenotype=gbm.v.hc.labels,
+            conditions=c("HC", "GBM"),
+            rankings=gbm.v.hc.ranking,
+            file.path(save.dir),
+            0.05)
 
 # ==================== MET V HC
 
@@ -244,26 +244,26 @@ met.v.hc.processed <- read.csv("src/process-2.6/combine-data-3/met-v-hc-norm.csv
                                row.names=1)
 met.v.hc.labels <- read.table("src/process-2.6/combine-data-3/METVsHC_output_labels.txt", header=T)
 
-# conduct.rfe(data=met.v.hc.processed,
-#             phenotype=met.v.hc.labels,
-#             conditions=c("HC", "MET"),
-#             rankings=met.v.hc.ranking,
-#             file.path(save.dir),
-#             0.01)
-# 
-# conduct.rfe(data=met.v.hc.processed,
-#             phenotype=met.v.hc.labels,
-#             conditions=c("HC", "MET"),
-#             rankings=met.v.hc.ranking,
-#             file.path(save.dir),
-#             0.03)
-# 
-# conduct.rfe(data=met.v.hc.processed,
-#             phenotype=met.v.hc.labels,
-#             conditions=c("HC", "MET"),
-#             rankings=met.v.hc.ranking,
-#             file.path(save.dir),
-#             0.05)
+conduct.rfe(data=met.v.hc.processed,
+            phenotype=met.v.hc.labels,
+            conditions=c("HC", "MET"),
+            rankings=met.v.hc.ranking,
+            file.path(save.dir),
+            0.01)
+
+conduct.rfe(data=met.v.hc.processed,
+            phenotype=met.v.hc.labels,
+            conditions=c("HC", "MET"),
+            rankings=met.v.hc.ranking,
+            file.path(save.dir),
+            0.03)
+
+conduct.rfe(data=met.v.hc.processed,
+            phenotype=met.v.hc.labels,
+            conditions=c("HC", "MET"),
+            rankings=met.v.hc.ranking,
+            file.path(save.dir),
+            0.05)
 
 
 

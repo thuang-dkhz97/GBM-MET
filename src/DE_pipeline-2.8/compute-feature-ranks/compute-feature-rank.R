@@ -1,7 +1,7 @@
 library(edgeR)
 library(tidyverse)
 
-source('src/DE_pipeline-2.8/cm_rf.R')
+source('src/DE_pipeline-2.8/compute-feature-ranks/cm_rf.R')
 
 de.ml.biomarker.discovery.compute.feature.rank <- function(data, phenotype,
                                                            conditions, pval_cutoff,
@@ -122,7 +122,7 @@ perform_de <- function(data, label, conditions){
   contr_matrix <- makeContrasts(contrasts = paste0(conditions[2], " - ", conditions[1]),
                                 levels = colnames(model_matrix))
   
-  fit <- lmFit(log2(data), model_matrix)
+  fit <- lmFit(data, model_matrix)
   # print(head(coef(fit)))
   fit <- contrasts.fit(fit, contr_matrix)
   # print(head(coef(fit)))
@@ -138,7 +138,7 @@ perform_de <- function(data, label, conditions){
 }
 
 
-save.dir <- file.path("src", "DE_pipeline-2.8", "feature-ranks")
+save.dir <- file.path("src", "DE_pipeline-2.8", 'compute-feature-ranks', "feature-ranks")
 
 # Conduct combined feature selection with DE and data file path
 gbm.v.met.processed <- read.csv("src/process-2.6/combine-data-3/gbm-v-met-norm.csv",

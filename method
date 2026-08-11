@@ -3,7 +3,7 @@ Figure 3
 - Then plot in a venn diagram
 
 Processing
-- Combine all cohorts, then remove features with >50% missingness
+- Combine all cohorts, log transform, then remove features with >50% missingness
 - Perform missforest imputation on SBTB dataset alone, and on HCBB dataset
   alone, so that we don't have bias from batch effect.
 - Create 3 comparisons: GBMvMET, GBMvHC, METvHC, then:
@@ -19,5 +19,4 @@ FEMPipeline
     will be selected.
   
 2.8
-- Conduct DE, and RFE to rank each feature. Note that log2 transformation
-  was conducted here, as limma expects heteroskedactic residuals.
+- Conduct DE, and RFE to rank each feature. 

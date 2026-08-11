@@ -2,10 +2,10 @@ library(VennDiagram)
 library(gridExtra)
 library(grid)
 
-gbm.a <- read.csv("./src/process/combine-data-1/fig3/gbm-a.csv")
-gbm.b <- read.csv("./src/process/combine-data-1/fig3/gbm-b.csv")
-hc <- read.csv("./src/process/combine-data-1/fig3/hc.csv")
-met <- read.csv("./src/process/combine-data-1/fig3/met.csv")
+gbm.a <- read.csv("./src/process-2.6/combine-data-1/fig3/gbm-a.csv")
+gbm.b <- read.csv("./src/process-2.6/combine-data-1/fig3/gbm-b.csv")
+hc <- read.csv("./src/process-2.6/combine-data-1/fig3/hc.csv")
+met <- read.csv("./src/process-2.6/combine-data-1/fig3/met.csv")
 
 gbm.a.expr <- gbm.a[,1]
 gbm.b.expr <- gbm.b[,1]

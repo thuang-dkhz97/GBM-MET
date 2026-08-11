@@ -51,6 +51,9 @@ sample.sheet <- read.xlsx("./data/class-labels.xlsx")
 sbtb <- sbtb %>% dplyr::select(any_of(sample.sheet$Sample.ID))
 hcbb <- hcbb %>% dplyr::select(any_of(sample.sheet$Sample.ID))
 
+sbtb <- log2(sbtb)
+hcbb <- log2(hcbb)
+
 # ============= Remove features with >50% missingness ===========
 # This filtration was done by combining the dataset.
 # Note that at this stage, we have only combined the datasets

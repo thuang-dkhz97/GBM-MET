@@ -56,6 +56,7 @@ feature.sel <- rownames(counts)
 
 gbm.v.met.save <- list("method"=d$FSM,
                        "sel.size"=d$sel.size,
+                       "model"=d$Model,
                        "features"=feature.sel)
 print(gbm.v.met.save)
 # Save
@@ -77,6 +78,7 @@ feature.sel <- rownames(counts)
 
 gbm.v.hc.save <- list("method"=d$FSM,
                       "sel.size"=d$sel.size,
+                      "model"=d$Model,
                       "features"=feature.sel)
 print(gbm.v.hc.save)
 # Save
@@ -98,6 +100,7 @@ feature.sel <- rownames(counts)
 
 met.v.hc.save <- list("method"=d$FSM,
                       "sel.size"=d$sel.size,
+                      "model"=d$Model,
                       "features"=feature.sel)
 print(met.v.hc.save)
 # Save
