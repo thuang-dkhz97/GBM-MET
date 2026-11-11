@@ -53,6 +53,7 @@ rsconnect/
 data/*
 FEMPipeline/*
 results/*
+src/process-2.6/combine-data-1/*
 src/process-2.6/combine-data-1/fig3/*
 src/process-2.6/combine-data-2/*
 src/process-2.6/combine-data-3/*
