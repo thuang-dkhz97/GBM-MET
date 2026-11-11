@@ -1,12 +1,19 @@
 suppressPackageStartupMessages(library(ggrepel))
 library(limma)
+library(tibble)
+library(magrittr)
+library(dplyr)
+library(openxlsx)
 
 create_volcano_plot <- function(data, phenotype, conditions, title, file_name, dir_path = "",
                                 p_val_cutoff = 0.05, logFC_cutoff = 5,
                                 use_p_val = FALSE,
                                 k = 5,
-                                colours) {
+                                colours,
+                                RNA=F) {
   label <- phenotype$Label[match(colnames(data), phenotype$Sample)]
+  # keep <- edgeR::filterByExpr(data, group=label)
+  # data <- data[keep, ]
   model_matrix <- model.matrix(~ 0 + label)
   colnames(model_matrix) <- sub("label", "", colnames(model_matrix), fixed = TRUE)
   contr_matrix <- makeContrasts(contrasts = paste0(conditions[2], " - ", conditions[1]),
@@ -76,49 +83,85 @@ create_volcano_plot <- function(data, phenotype, conditions, title, file_name, d
 
   # save diff exp
   comp.name <- paste(rev(conditions), collapse="-vs-")
+  if(RNA) {
+    comp.name <- paste(comp.name, "-RNA")
+  }
   write.xlsx(result[,1:(ncol(result)-1)], file=file.path(dir_path, paste0(comp.name, "-diff.xlsx")))
 }
 
 save.dir <- file.path("src", "figures", "SuppFigure5")
 
-# ================== GBM V MET
+# # ================== GBM V MET
+# 
+# gbm.v.met.processed <- read.csv("src/process-2.6/combine-data-3/gbm-v-met-norm.csv",
+#                                 row.names=1)
+# gbm.v.met.labels <- read.table("src/process-2.6/combine-data-3/GBMVsMET_output_labels.txt", header=T)
+# colours <- c("#34a1e6", "#27d83a", "#b5b5b5")
+# create_volcano_plot(gbm.v.met.processed, gbm.v.met.labels, c("MET", "GBM"),
+#                     "GBM compared to MET", "GBMvsMET-volcano.png",
+#                     save.dir,
+#                     logFC_cutoff=log2(1.5),
+#                     use_p_val=T, colours=colours, k=10)
+# 
+# # =============== GBM V HC
+# 
+# gbm.v.hc.processed <- read.csv("src/process-2.6/combine-data-3/gbm-v-hc-norm.csv",
+#                                 row.names=1)
+# gbm.v.hc.labels <- read.table("src/process-2.6/combine-data-3/GBMVsHC_output_labels.txt", header=T)
+# colours <- c("#34a1e6", "#f21210", "#b5b5b5")
+# create_volcano_plot(gbm.v.hc.processed, gbm.v.hc.labels, c("HC", "GBM"),
+#                     "GBM compared to HC", "GBMvsHC-volcano.png",
+#                     save.dir,
+#                     logFC_cutoff=log2(1.5),
+#                     use_p_val=T,
+#                     colours=colours,
+#                     k=10)
+# 
+# # ============= MET V HC
+# 
+# met.v.hc.processed <- read.csv("src/process-2.6/combine-data-3/met-v-hc-norm.csv",
+#                                row.names=1)
+# met.v.hc.labels <- read.table("src/process-2.6/combine-data-3/METVsHC_output_labels.txt", header=T)
+# colours <- c("#27d83a", "#f21210", "#b5b5b5")
+# create_volcano_plot(met.v.hc.processed, met.v.hc.labels, c("HC", "MET"),
+#                     "MET compared to HC", "METvsHC-volcano.png",
+#                     save.dir,
+#                     logFC_cutoff=log2(1.5),
+#                     use_p_val=T,
+#                     colours=colours,
+#                     k=10)
 
-gbm.v.met.processed <- read.csv("src/process-2.6/combine-data-3/gbm-v-met-norm.csv",
-                                row.names=1)
+gbm.v.met.RNA <- openxlsx::read.xlsx("data/GBM-BMET.xlsx", rowNames=T)
 gbm.v.met.labels <- read.table("src/process-2.6/combine-data-3/GBMVsMET_output_labels.txt", header=T)
 colours <- c("#34a1e6", "#27d83a", "#b5b5b5")
-create_volcano_plot(gbm.v.met.processed, gbm.v.met.labels, c("MET", "GBM"),
-                    "GBM compared to MET", "GBMvsMET-volcano.png",
+create_volcano_plot(gbm.v.met.RNA, gbm.v.met.labels, c("MET", "GBM"),
+                    "GBM compared to MET", "GBMvsMET-RNA-volcano.png",
                     save.dir,
-                    logFC_cutoff=log2(1.5),
-                    use_p_val=T, colours=colours, k=10)
+                    logFC_cutoff=log2(1.2),
+                    use_p_val=T, colours=colours, k=10, RNA=T)
 
-# =============== GBM V HC
 
-gbm.v.hc.processed <- read.csv("src/process-2.6/combine-data-3/gbm-v-hc-norm.csv",
-                                row.names=1)
+
+gbm.v.hc.RNA <- openxlsx::read.xlsx("data/GBM-HC.xlsx", rowNames=T)
 gbm.v.hc.labels <- read.table("src/process-2.6/combine-data-3/GBMVsHC_output_labels.txt", header=T)
-colours <- c("#34a1e6", "#f21210", "#b5b5b5")
-create_volcano_plot(gbm.v.hc.processed, gbm.v.hc.labels, c("HC", "GBM"),
-                    "GBM compared to HC", "GBMvsHC-volcano.png",
+colours <- c("#34a1e6", "#27d83a", "#b5b5b5")
+
+create_volcano_plot(gbm.v.hc.RNA, gbm.v.hc.labels, c("HC", "GBM"),
+                    "GBM compared to HC", "GBMvsHC-RNA-volcano.png",
                     save.dir,
-                    logFC_cutoff=log2(1.5),
-                    use_p_val=T,
-                    colours=colours,
-                    k=10)
+                    logFC_cutoff=log2(1.2),
+                    use_p_val=T, colours=colours, k=10, RNA=T)
 
-# ============= MET V HC
 
-met.v.hc.processed <- read.csv("src/process-2.6/combine-data-3/met-v-hc-norm.csv",
-                               row.names=1)
+met.v.hc.RNA <- openxlsx::read.xlsx("data/BMET-HC.xlsx", rowNames=T)
 met.v.hc.labels <- read.table("src/process-2.6/combine-data-3/METVsHC_output_labels.txt", header=T)
-colours <- c("#27d83a", "#f21210", "#b5b5b5")
-create_volcano_plot(met.v.hc.processed, met.v.hc.labels, c("HC", "MET"),
-                    "MET compared to HC", "METvsHC-volcano.png",
+colours <- c("#34a1e6", "#27d83a", "#b5b5b5")
+create_volcano_plot(met.v.hc.RNA, met.v.hc.labels, c("HC", "MET"),
+                    "MET compared to HC", "METvsHC-RNA-volcano.png",
                     save.dir,
-                    logFC_cutoff=log2(1.5),
-                    use_p_val=T,
-                    colours=colours,
-                    k=10)
+                    logFC_cutoff=log2(1.2),
+                    use_p_val=T, colours=colours, k=10, RNA=T)
+
+
 
 

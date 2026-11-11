@@ -60,7 +60,7 @@ src/pipeline-2.7/filtration-after-initial-selection/candidate/*
 src/pipeline-2.7/final-filtration/selected/*
 src/DE_pipeline-2.8/compute-feature-ranks/feature-ranks/*
 src/DE_pipeline-2.8/RFE/rfe-results/*
-src/DE_pipeline-2.8/RFE/rfe-results-archive/*
+src/DE_pipeline-2.8/RFE/rfe-results-archive /*
 src/DE_pipeline-2.8/post-RFE-select-by-AUC/select-AUC/*
 src/figures/*.html
 src/process-2.6/combine-data-1/*.csv
@@ -73,4 +73,9 @@ src/figures/SuppFigure5/*.png
 src/figures/SuppFigure5/*.xlsx
 src/figures/SuppFigure6/images/*.png
 src/tables/supp_table_4/*.xlsx
+src/DE_pipeline-2.8/RFE/rfe-results-archive/*
+
+src/nested/preprocess/*/
+src/nested/preprocess-RNA/*/
+
 

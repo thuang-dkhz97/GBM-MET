@@ -1,0 +1,283 @@
+---
+title: "RNA nested"
+author: "Tim"
+date: "2026-11-04"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(kableExtra)
+library(plotly)
+library(stringr)
+
+# Init Step to make sure that the dependencies are loaded
+htmltools::tagList(ggplotly(ggplot()))
+set.seed(42)
+
+```
+
+```{r, echo=F}
+
+plot.heatmap <- function(metric.data) {
+  # ========== settings 
+  pt2lw <- function(pt) pt * (96 / 72.27) / .pt
+  font_family <- "sans"
+  min_folds        <- 10     # only plot genes selected in at least this many folds
+  high_folds       <- 20    # threshold separating the "consistent" group
+  folds_per_repeat <- 5
+  col_selected     <- "#406FB6"
+  col_not_selected <- "#9FB7DF"
+  
+# =======================
+  
+  fold.genes <- lapply(metric.data$features, 
+                           function(x) unique(x[!is.na(x)]))
+  genes <- sort(unique(unlist(fold.genes)), method="radix")
+  sel <- vapply(fold.genes, function(g) genes %in% g,
+                logical(length(genes)))
+  rownames(sel) <- genes 
+  
+  n.folds.total <- ncol(sel)
+  n.selected    <- rowSums(sel)
+  
+  ord        <- order(-n.selected, rownames(sel), method = "radix")
+  sel        <- sel[ord, , drop = FALSE]
+  n.selected <- n.selected[ord]
+  
+  sel_plot <- sel[n.selected >= min_folds, , drop = FALSE]
+  n_genes  <- nrow(sel_plot)
+  n_high   <- sum(n.selected >= high_folds)  # genes selected in >= high_folds folds
+  n_mid    <- n_genes - n_high               # genes selected in min_folds..(high_folds - 1)
+  n_repeat <- n.folds.total / folds_per_repeat
+   
+  # message(sprintf("%d genes plotted: %d selected in >= %d folds, %d in %d-%d folds",
+  #                 n_genes, n_high, high_folds, n_mid, min_folds, high_folds - 1))
+   
+  # ---- Long format for ggplot --------------------------------------------------
+  plot_df <- data.frame(
+    rank   = rep(seq_len(n_genes),        times = n.folds.total),
+    fold   = rep(seq_len(n.folds.total),  each  = n_genes),
+    status = factor(as.vector(sel_plot),
+                    levels = c(TRUE, FALSE),
+                    labels = c("Selected", "Not selected"))
+  )
+   
+  # ---- Bracket helper (drawn to the right of the heatmap) ----------------------
+  x_br <- n.folds.total + 3     # x position of the bracket (in fold units)
+  tick <- 1.8                   # length of the bracket end ticks
+   
+  bracket <- function(y0, y1, label) {
+    list(
+      annotate("path",
+               x = c(x_br - tick, x_br, x_br, x_br - tick),
+               y = c(y0, y0, y1, y1),
+               linewidth = pt2lw(0.6), colour = "black", lineend = "butt"),
+      annotate("text", x = x_br + 2, y = (y0 + y1) / 2, label = label,
+               hjust = 0, vjust = 0.5, size = 7 / .pt, lineheight = 0.95,
+               family = font_family, colour = "black")
+    )
+  }
+   
+  # ---- Plot --------------------------------------------------------------------
+  p <- ggplot(plot_df, aes(x = fold, y = rank, fill = status)) +
+    geom_raster() +
+    # white lines between repeats
+    geom_vline(xintercept = seq(folds_per_repeat, n.folds.total - folds_per_repeat,
+                                by = folds_per_repeat) + 0.5,
+               colour = "white", linewidth = pt2lw(0.8)) +
+    # dotted white line separating the >= high_folds group from the rest
+    geom_hline(yintercept = n_high + 0.5, colour = "white",
+               linewidth = pt2lw(0.9), linetype = "11") +
+    # brackets labelling the two groups
+    bracket(0.6, n_high + 0.1,
+            sprintf("Selected in\n\u2265%d%% of folds\n(n = %d)",
+                    round(100 * high_folds / n.folds.total), n_high)) +
+    bracket(n_high + 0.9, n_genes + 0.4,
+            sprintf("Selected in\n%d\u2013%d%% of folds\n(n = %d)",
+                    round(100 * min_folds / n.folds.total),
+                    round(100 * (high_folds - 1) / n.folds.total), n_mid)) +
+    scale_fill_manual(values = c("Selected"     = col_selected,
+                                 "Not selected" = col_not_selected)) +
+    scale_x_continuous(breaks = seq(folds_per_repeat / 2 + 0.5, by = folds_per_repeat,
+                                    length.out = n_repeat),
+                       labels = seq_len(n_repeat), expand = c(0, 0)) +
+    scale_y_reverse(breaks = c(1, 50, 100, 150, 200), expand = c(0, 0)) +
+    coord_cartesian(clip = "off") +
+    labs(title = sprintf("Gene selection frequency (%d CV folds)", n.folds.total),
+         x     = sprintf("Cross-validation repeat (%d folds each)", folds_per_repeat),
+         y     = "Genes ranked by selection frequency") +
+    guides(fill = guide_legend(title = NULL)) +
+    theme_classic(base_size = 8, base_family = font_family) +
+    theme(
+      plot.title        = element_text(size = 9, hjust = 0, margin = margin(b = 6)),
+      axis.title        = element_text(size = 8, colour = "black"),
+      axis.text         = element_text(size = 7, colour = "black"),
+      axis.line         = element_line(linewidth = pt2lw(0.6), colour = "black"),
+      axis.ticks        = element_line(linewidth = pt2lw(0.6), colour = "black"),
+      axis.ticks.length = unit(3, "pt"),
+      legend.position   = "bottom",
+      legend.text       = element_text(size = 7.5),
+      legend.key.size   = unit(3.2, "mm"),
+      legend.margin     = margin(t = 2),
+      plot.margin       = margin(t = 6, r = 80, b = 6, l = 6, unit = "pt")  # room for brackets
+    )
+   
+  print(p)
+}
+
+obtain.table.prop <- function(metric.data, unnested.features) {
+  fold.genes <- lapply(metric.data$features, 
+                           function(x) unique(x[!is.na(x)]))
+  genes <- sort(unique(unlist(fold.genes)), method="radix")
+  sel <- vapply(fold.genes, function(g) genes %in% g,
+                logical(length(genes)))
+  rownames(sel) <- genes 
+  n.selected    <- rowSums(sel)
+  n.selected <- n.selected[names(n.selected) %in% unnested.features]
+  # Check which features haven't been selected, and just set them to 0.
+  unselected.features <- setdiff(unnested.features, names(n.selected))
+  unselected.counts <- rep(0, length(unselected.features))
+  names(unselected.counts) <- unselected.features
+  n.selected <- c(n.selected, unselected.counts)
+  n.selected <- round(n.selected[unnested.features]/30, 3)
+  print(n.selected %>% as.data.frame%>% kbl(align="c") %>% kable_styling(full_width = F, position="left", bootstrap_options="bordered"))
+  n.selected
+}
+
+```
+
+```{r, echo=F}
+
+load.metrics <- function(comparison="gbm.v.met", path.to.root="../../..", unnested.features=NULL) {
+  metric.table <- data.frame()
+  # Load folders
+  folder.names <- list.dirs(file.path(path.to.root, "results", "nested",
+                                      paste0(comparison, ".RNA")),
+                            recursive=F)
+  feature.sel.prop <- matrix(data=NA, nrow=length(unnested.features), ncol=0)
+  rownames(feature.sel.prop) <- unnested.features
+  for (folders in folder.names) {
+    # For each folder, load in the files
+    file.names <- list.files(folders, recursive=F, full.names = T)
+    for (files in file.names) {
+      # Then parse the parameters
+      fc <- str_extract(files, "(?<=fc-).*(?=_model)")
+      model <- str_extract(files, "(?<=_model-).*(?=_feature-sel)")
+      fsm <- str_extract(files, "(?<=feature-sel-).*(?=_boots)")
+      boots <- str_extract(files, "(?<=boots-).*(?=_sel-prop)")
+      sel.prop <- str_extract(files, "(?<=sel-prop-).*(?=_top-k)")
+      top.k <- str_extract(files, "(?<=top-k-).*(?=_comparison)")
+      print(model)
+      cat(paste0("\n\n## FSM=", fsm, " Model=", model, " \n\n"))
+      
+      # Load in the data file.
+      metric.data <- readRDS(files)
+      med.auc <- round(mean(metric.data$auc), 3)
+      med.sens <- round(mean(metric.data$sens), 3)
+      med.spec <- round(mean(metric.data$spec), 3)
+      med.acc <- round(mean(metric.data$acc), 3)
+      
+      # Scan through each fold and record the proportion that each feature
+      # was selected
+      prop.list <- table(unlist(lapply(metric.data$features, unique)))/length(metric.data$features)
+      # Obtain the full list of genes, and check which ones
+      # appear per fold.
+      plot.heatmap(metric.data)
+      
+      n.selected.method.specific <- obtain.table.prop(metric.data, unnested.features)
+      feature.sel.prop <- cbind(feature.sel.prop, n.selected.method.specific)
+      
+      curr.table <- data.frame("Accuracy"=med.acc,
+                               "Sensitivity"=med.sens,
+                               "Specificity"=med.spec,
+                               "AUC"=med.auc,
+                               "FSM"=fsm,
+                               "Model"=model)
+      
+      metric.table <- rbind(metric.table, 
+                            curr.table)
+      print(curr.table %>% kbl(align="c") %>% kable_styling(full_width = F, position="left", bootstrap_options="bordered"))
+    }
+  }
+  cat("\n\n# Summary \n\n")
+  # For the metric table, generate the mean of each metric, and also create the bootstrap
+  # intervals
+  mean.row <- c()
+  for (i in 1:4) {
+    metric.column <- metric.table[,i]
+    mean.metric <- round(mean(metric.column), 3)
+    B <- 10000
+    boot.means <- c()
+    for (b in 1:B) {
+      boot.metric.column <- sample(metric.column, size=length(metric.column), replace=T)
+      boot.means <- c(boot.means, mean(boot.metric.column))
+    }
+    mean.lower <- round(quantile(boot.means, 0.025), 3)
+    mean.upper <- round(quantile(boot.means, 0.975), 3)
+    
+    mean.row <- c(mean.row, paste0(mean.metric, " (", mean.lower, "-", mean.upper, ")"))
+  }
+  mean.row <- c(mean.row, "Mean", "Mean")
+  metric.table <- rbind(metric.table, mean.row)
+  print(metric.table %>% kbl(align="c") %>% kable_styling(full_width = F, position="left", bootstrap_options="bordered"))
+  
+  cat("\n\nMean selection prop \n\n")
+  print(feature.sel.prop %>% rowMeans %>% round(3) %>% as.data.frame %>% kbl(align="c") %>% kable_styling(full_width = F, position="left", bootstrap_options="bordered"))
+  
+}
+
+
+```
+
+
+# GBM Vs MET
+
+```{r, echo=F, results="asis"}
+
+# List directories in here.
+load.metrics("gbm.v.met", unnested.features=c("hsa_let_7f_5p", "hsa_miR_27b_3p",
+                                              "hsa_miR_182_5p", "hsa_miR_190a_5p"))
+
+
+```
+
+# GBM Vs HC
+
+```{r, echo=F, results="asis"}
+
+# List directories in here.
+load.metrics("gbm.v.hc", unnested.features=c("hsa_miR_342_3p", "hsa_miR_10a_5p",
+                                             "hsa_miR_27b_3p", "hsa_miR_190a_5p",
+                                             "hsa_miR_150_5p", "hsa_miR_24_3p",
+                                             "hsa_miR_144_5p", "hsa_let_7g_5p",
+                                             "hsa_let_7f_5p", "hsa_miR_103a_3p",
+                                             "hsa_piR_28533"))
+
+
+```
+
+
+
+# MET Vs HC
+
+```{r, echo=F, results="asis"}
+
+# List directories in here.
+load.metrics("met.v.hc", unnested.features=c("hsa_miR_223_3p", "hsa_miR_20a_5p",
+                                             "hsa_let_7b_5p", "hsa_miR_142_3p",
+                                             "hsa_miR_378a_3p", "hsa_miR_1246",
+                                             "hsa_miR_342_3p", "hsa_miR_432_5p",
+                                             "hsa_miR_122_5p", "hsa_miR_196b_5p",
+                                             "hsa_miR_126_5p"))
+
+
+# readRDS("../../../results/nested/met.v.hc/model-ridge_fs-lasso/model-ridge_feature-sel-lasso_boots-100_sel-prop-0.001_comparison-met.v.hc.rds")
+
+
+```
+
+
