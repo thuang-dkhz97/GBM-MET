@@ -55,9 +55,9 @@ BlastRNAPredict-main/
 |   |   |   ├── nested-pipeline.R  # Main code to be called to run nested validation
 |   |   |   ├── nested.sh  # Shell scripts to run nested-pipeline.R with command line arguments.
 │   │   │   └── helper.R  
-│   |   ├── markdown/  # Code to generate markdowns for visual rundown of results
-|   |   |   ├── *.Rmd  # Code to help generate markdowns
-│   │   │   └── *.html # The markdown documents.  
+│   |   └── markdown/  # Code to generate markdowns for visual rundown of results
+|   |       ├── *.Rmd  # Code to help generate markdowns
+│   │       └── *.html # The markdown documents.  
 ├── .gitignore
 └── README.md
 ```
